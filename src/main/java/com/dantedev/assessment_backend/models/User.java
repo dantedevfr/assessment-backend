@@ -4,10 +4,13 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import com.dantedev.assessment_backend.utils.JsonNodeConverter;
 
 @Entity
 @Table(name = "users",
@@ -48,7 +51,8 @@ public class User {
     private String password;
 
     @Column(columnDefinition = "jsonb", nullable = true)
-    private String profile;
+    @Convert(converter = JsonNodeConverter.class)
+    private JsonNode profile;
 
     @Column(name = "created_at", updatable = false)
     private Instant createdAt;
@@ -131,11 +135,11 @@ public class User {
         this.password = password;
     }
 
-    public String getProfile() {
+    public JsonNode  getProfile() {
         return profile;
     }
 
-    public void setProfile(String profile) {
+    public void setProfile(JsonNode  profile) {
         this.profile = profile;
     }
 
