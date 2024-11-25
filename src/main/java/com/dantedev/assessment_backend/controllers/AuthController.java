@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -88,16 +89,21 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
         }
 
+        System.out.println(signUpRequest);
+
         // Create new user's account
         User user = new User(
                 signUpRequest.getFirstName(),
                 signUpRequest.getLastName(),
                 signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+                encoder.encode(signUpRequest.getPassword()),
+                signUpRequest.getProfile());
 
-        Set<String> strRoles = signUpRequest.getRole();
+        Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
+        System.out.println("here strRoles");
+        System.out.println(strRoles);
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
@@ -105,6 +111,10 @@ public class AuthController {
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
+                System.out.println("strRoles");
+                System.out.println(strRoles);
+                System.out.println(role);
+
                 switch (role) {
                     case "admin":
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
@@ -127,8 +137,8 @@ public class AuthController {
         }
 
         user.setRoles(roles);
+        System.out.println(user.toString());
         userRepository.save(user);
-
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 

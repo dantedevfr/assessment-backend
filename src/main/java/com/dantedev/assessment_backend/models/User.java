@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-import com.dantedev.assessment_backend.utils.JsonNodeConverter;
+import org.hibernate.annotations.ColumnTransformer;
 
 @Entity
 @Table(name = "users",
@@ -50,8 +50,8 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(columnDefinition = "jsonb", nullable = true)
-    @Convert(converter = JsonNodeConverter.class)
+
+    @ColumnTransformer(write = "?::jsonb")
     private JsonNode profile;
 
     @Column(name = "created_at", updatable = false)
@@ -71,19 +71,15 @@ public class User {
 
     }
 
-    public User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
 
     // Constructor with fields
-    public User(String firstName, String lastName, String username, String email, String password) {
+    public User(String firstName, String lastName, String username, String email, String password, JsonNode profile) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.email = email;
         this.password = password;
+        this.profile = profile;
     }
 
     // Getters and Setters
@@ -177,5 +173,21 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = Instant.now();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", profile=" + profile +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", roles=" + roles +
+                '}';
     }
 }

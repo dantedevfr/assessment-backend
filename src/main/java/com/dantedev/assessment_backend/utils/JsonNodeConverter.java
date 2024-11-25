@@ -13,6 +13,7 @@ public class JsonNodeConverter implements AttributeConverter<JsonNode, String> {
     @Override
     public String convertToDatabaseColumn(JsonNode attribute) {
         try {
+            System.out.println("Converting JsonNode to String with explicit cast: " + attribute);
             return attribute != null ? objectMapper.writeValueAsString(attribute) : null;
         } catch (Exception e) {
             throw new IllegalArgumentException("Error serializing JSON to String", e);
@@ -22,9 +23,10 @@ public class JsonNodeConverter implements AttributeConverter<JsonNode, String> {
     @Override
     public JsonNode convertToEntityAttribute(String dbData) {
         try {
-            return dbData != null ? objectMapper.readTree(dbData) : null;
+            // Convierte la cadena JSON de la base de datos en JsonNode
+            return dbData != null ? objectMapper.readTree(dbData) : objectMapper.createObjectNode(); // Objeto JSON vacío si es null
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error deserializing String to JSON", e);
+            throw new IllegalArgumentException("Error deserializando String a JsonNode", e);
         }
     }
 }
