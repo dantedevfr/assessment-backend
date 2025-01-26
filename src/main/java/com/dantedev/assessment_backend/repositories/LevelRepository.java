@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LevelRepository extends JpaRepository<Level, Long> {
     // Custom queries for Level can be added here if needed
+    boolean existsByName(String name);
 }

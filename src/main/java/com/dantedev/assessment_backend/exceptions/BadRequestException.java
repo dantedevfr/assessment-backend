@@ -5,7 +5,14 @@ package com.dantedev.assessment_backend.exceptions;
  */
 public class BadRequestException extends RuntimeException {
 
-    public BadRequestException(String message) {
+    private final String errorCode;
+
+    public BadRequestException(String message, String errorCode) {
         super(message);
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
     }
 }

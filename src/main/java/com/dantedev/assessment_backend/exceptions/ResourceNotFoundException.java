@@ -5,7 +5,14 @@ package com.dantedev.assessment_backend.exceptions;
  */
 public class ResourceNotFoundException extends RuntimeException {
 
-    public ResourceNotFoundException(String message) {
+    private final String errorCode;
+
+    public ResourceNotFoundException(String message, String errorCode) {
         super(message);
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
     }
 }

@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
                 false,
                 "Resource not found",
                 null,
-                ErrorCodes.ERROR_RESOURCE_NOT_FOUND,
+                ex.getErrorCode(), // Usa el código de error específico de la excepción
                 HttpStatus.NOT_FOUND.value(),
                 request.getDescription(false),
                 ex.getMessage()
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
                 false,
                 "Invalid request",
                 null,
-                ErrorCodes.ERROR_INVALID_REQUEST,
+                ex.getErrorCode(), // Usa el código de error específico de la excepción
                 HttpStatus.BAD_REQUEST.value(),
                 request.getDescription(false),
                 ex.getMessage()
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
                 false,
                 "Internal server error",
                 null,
-                ErrorCodes.ERROR_INTERNAL_SERVER,
+                ErrorCodes.ERROR_INTERNAL_SERVER, // Mantiene un código genérico para excepciones no controladas
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 request.getDescription(false),
                 ex.getMessage()
