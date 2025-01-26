@@ -1,6 +1,9 @@
 package com.dantedev.assessment_backend.services;
 
+import com.dantedev.assessment_backend.exceptions.ResourceNotFoundException;
 import com.dantedev.assessment_backend.models.Level;
+import com.dantedev.assessment_backend.payload.request.LevelRequest;
+import com.dantedev.assessment_backend.payload.response.LevelResponse;
 import com.dantedev.assessment_backend.repositories.GenericRepository;
 import com.dantedev.assessment_backend.repositories.LevelRepository;
 import com.dantedev.assessment_backend.utils.FilterHelper;
@@ -22,46 +25,46 @@ public class LevelService {
         this.genericRepository = genericRepository;
     }
 
-    public Level createLevel(Level level) {
-        return levelRepository.save(level);
+    public LevelResponse createLevel(LevelRequest levelRequest) {
+        Level level = new Level();
+        level.setName(levelRequest.getName());
+        level.setDescription(levelRequest.getDescription());
+        return new LevelResponse(levelRepository.save(level));
     }
 
-    public Page<Level> getAllLevels(Pageable pageable) {
-        return levelRepository.findAll(pageable);
-    }
 
-    public Level getLevelById(Long id) {
-        return levelRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Level not found"));
-    }
-
-    public Level updateLevel(Long id, Level updatedLevel) {
+    public LevelResponse getLevelById(Long id) {
         Level level = levelRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Level not found"));
-        level.setName(updatedLevel.getName());
-        level.setDescription(updatedLevel.getDescription());
-        return levelRepository.save(level);
+                .orElseThrow(() -> new ResourceNotFoundException("Level with ID " + id + " not found"));
+        return new LevelResponse(level);
+    }
+
+
+    public LevelResponse updateLevel(Long id, LevelRequest updatedLevelRequest) {
+        Level level = levelRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Level with ID " + id + " not found"));
+        level.setName(updatedLevelRequest.getName());
+        level.setDescription(updatedLevelRequest.getDescription());
+        return new LevelResponse(levelRepository.save(level));
     }
 
     public void deleteLevel(Long id) {
         if (!levelRepository.existsById(id)) {
-            throw new RuntimeException("Level not found");
+            throw new ResourceNotFoundException("Level with ID " + id + " not found");
         }
         levelRepository.deleteById(id);
     }
 
-    public Page<Level> getAllLevelsWithFilters(Map<String, String> filters, Pageable pageable) {
-        // Define los campos válidos y sus tipos para la entidad Level
+    public Page<LevelResponse> getAllLevelsWithFilters(Map<String, String> filters, Pageable pageable) {
         Map<String, Class<?>> validFields = Map.of(
                 "name", String.class,
                 "createdAt", LocalDateTime.class,
                 "id", Long.class
         );
 
-        // Validar y transformar los filtros
         Map<String, Object> validFilters = FilterHelper.validateAndParseFilters(filters, validFields);
 
-        // Pasar los filtros validados al repositorio genérico
-        return genericRepository.findWithFilters(Level.class, validFilters, pageable);
+        return genericRepository.findWithFilters(Level.class, validFilters, pageable)
+                .map(LevelResponse::new);
     }
 }
