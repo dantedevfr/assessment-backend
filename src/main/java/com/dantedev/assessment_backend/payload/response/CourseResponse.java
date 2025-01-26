@@ -1,5 +1,8 @@
 package com.dantedev.assessment_backend.payload.response;
 
+import com.dantedev.assessment_backend.models.Course;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -8,12 +11,27 @@ public class CourseResponse {
     private Long id;
     private String title;
     private String description;
-    private String creatorName; // Username
-    private String levelName;   // Level name
+    private String creatorName; // Username of the creator
+    private String levelName;   // Name of the level
     private Boolean isPublic;
     private BigDecimal price;
+    private JsonNode content;   // JSONB data for flexible content
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // Constructor que toma un objeto Course
+    public CourseResponse(Course course) {
+        this.id = course.getId();
+        this.title = course.getTitle();
+        this.description = course.getDescription();
+        this.creatorName = course.getCreatedBy().getUsername(); // Relación con User
+        this.levelName = course.getLevel().getName(); // Relación con Level
+        this.content = course.getContent();
+        this.isPublic = course.getIsPublic();
+        this.price = course.getPrice();
+        this.createdAt = course.getCreatedAt();
+        this.updatedAt = course.getUpdatedAt();
+    }
 
     // Getters and Setters
 
@@ -71,6 +89,14 @@ public class CourseResponse {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public JsonNode getContent() {
+        return content;
+    }
+
+    public void setContent(JsonNode content) {
+        this.content = content;
     }
 
     public LocalDateTime getCreatedAt() {

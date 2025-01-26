@@ -21,7 +21,9 @@ public class FilterHelper {
                 Class<?> fieldType = validFields.get(key);
 
                 try {
-                    if (fieldType == String.class) {
+                    if (fieldType == Boolean.class) {
+                        validFilters.put(key, Boolean.valueOf(value));
+                    } else if (fieldType == String.class) {
                         validFilters.put(key, value);
                     } else if (fieldType == Long.class) {
                         validFilters.put(key, Long.parseLong(value));

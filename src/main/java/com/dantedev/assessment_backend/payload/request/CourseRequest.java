@@ -1,26 +1,28 @@
 package com.dantedev.assessment_backend.payload.request;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.math.BigDecimal;
 
 public class CourseRequest {
 
-    @NotBlank
+    @NotBlank(message = "Title cannot be blank")
     private String title;
 
     private String description;
 
-    @NotNull
-    private Long createdBy; // User ID
+    @NotNull(message = "Level ID is required")
+    private Long levelId; // Reference to Level
 
-    private Long levelId; // Level ID
+    private JsonNode content; // JSONB data for flexible content
 
-    private String content;
+    private Boolean isPublic = false; // Default to false
 
-    private Boolean isPublic;
-
-    private BigDecimal price;
+    @Positive(message = "Price must be a positive value")
+    private BigDecimal price = BigDecimal.ZERO; // Default to free
 
     // Getters and Setters
 
@@ -40,14 +42,6 @@ public class CourseRequest {
         this.description = description;
     }
 
-    public Long getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public Long getLevelId() {
         return levelId;
     }
@@ -56,11 +50,11 @@ public class CourseRequest {
         this.levelId = levelId;
     }
 
-    public String getContent() {
+    public JsonNode getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(JsonNode content) {
         this.content = content;
     }
 

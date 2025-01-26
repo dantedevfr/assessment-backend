@@ -51,4 +51,18 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        ApiResponse<Object> response = new ApiResponse<>(
+                false,
+                "Invalid request parameter",
+                null,
+                "ERROR_INVALID_REQUEST_PARAMETER",
+                HttpStatus.BAD_REQUEST.value(),
+                request.getDescription(false),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }

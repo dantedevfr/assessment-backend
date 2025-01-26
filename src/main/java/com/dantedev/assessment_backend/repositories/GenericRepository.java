@@ -33,6 +33,8 @@ public class GenericRepository<T> {
                     predicates.add(cb.like(cb.lower(root.get(key).as(String.class)), "%" + value.toString().toLowerCase() + "%"));
                 } else if (value instanceof Number) {
                     predicates.add(cb.equal(root.get(key), value));
+                } else if (value instanceof Boolean) {
+                    predicates.add(cb.equal(root.get(key), value));
                 } else if (value instanceof java.time.LocalDateTime) {
                     predicates.add(cb.equal(root.get(key), value));
                 }

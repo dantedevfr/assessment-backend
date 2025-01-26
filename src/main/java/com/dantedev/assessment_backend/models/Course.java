@@ -1,6 +1,8 @@
 package com.dantedev.assessment_backend.models;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,28 +15,26 @@ public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_course")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by", nullable = false)
-    private User createdBy;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "created_by", nullable = false, referencedColumnName = "id_user") // Relación con User
+    private User createdBy; // Relación con la entidad User
 
-    @ManyToOne
-    @JoinColumn(name = "id_level")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_level", nullable = false)
     private Level level;
 
     @Column(columnDefinition = "jsonb")
-    private String content;
-
-    @Column(name = "is_public", nullable = false)
-    private Boolean isPublic = false;
-
-    private BigDecimal price;
+    @ColumnTransformer(write = "?::jsonb")
+    private JsonNode content;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
@@ -44,7 +44,13 @@ public class Course {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    // Getters and Setters
+    @Column(name = "is_public", nullable = false)
+    private Boolean isPublic;
+
+    @Column(nullable = false)
+    private BigDecimal price = BigDecimal.ZERO;
+
+    // Getters y Setters
 
     public Long getId() {
         return id;
@@ -86,12 +92,20 @@ public class Course {
         this.level = level;
     }
 
-    public String getContent() {
+    public JsonNode getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(JsonNode content) {
         this.content = content;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     public Boolean getIsPublic() {
@@ -108,13 +122,5 @@ public class Course {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 }
