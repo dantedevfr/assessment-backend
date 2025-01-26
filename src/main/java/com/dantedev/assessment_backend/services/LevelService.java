@@ -9,7 +9,6 @@ import com.dantedev.assessment_backend.payload.response.LevelResponse;
 import com.dantedev.assessment_backend.repositories.GenericRepository;
 import com.dantedev.assessment_backend.repositories.LevelRepository;
 import com.dantedev.assessment_backend.utils.ErrorCodeGenerator;
-import com.dantedev.assessment_backend.utils.FilterHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
