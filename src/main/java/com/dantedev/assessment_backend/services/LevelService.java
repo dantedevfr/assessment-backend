@@ -22,10 +22,13 @@ public class LevelService {
 
     private final LevelRepository levelRepository;
     private final GenericRepository<Level> genericRepository;
+    private final GenericFilterService<Level> genericFilterService;
 
-    public LevelService(LevelRepository levelRepository, GenericRepository<Level> genericRepository) {
+    public LevelService(LevelRepository levelRepository, GenericRepository<Level> genericRepository,GenericFilterService<Level> genericFilterService) {
         this.levelRepository = levelRepository;
         this.genericRepository = genericRepository;
+        this.genericFilterService = genericFilterService;
+
     }
 
     public LevelResponse createLevel(LevelRequest levelRequest) {
@@ -47,7 +50,7 @@ public class LevelService {
         Level level = levelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Level with ID " + id + " not found",
-                        ErrorCodeGenerator.generate("RESOURCE_NOT_FOUND", "LEVEL", null)
+                        ErrorCodeGenerator.generate("ERROR","RESOURCE_NOT_FOUND", "LEVEL", null)
                 ));
         return new LevelResponse(level);
     }
@@ -57,7 +60,7 @@ public class LevelService {
         Level level = levelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Level with ID " + id + " not found",
-                        ErrorCodeGenerator.generate("RESOURCE_NOT_FOUND", "LEVEL", null)
+                        ErrorCodeGenerator.generate("ERROR","RESOURCE_NOT_FOUND", "LEVEL", null)
                 ));
         level.setName(updatedLevelRequest.getName());
         level.setDescription(updatedLevelRequest.getDescription());
@@ -68,7 +71,7 @@ public class LevelService {
         if (!levelRepository.existsById(id)) {
             throw new ResourceNotFoundException(
                     "Level with ID " + id + " not found",
-                    ErrorCodeGenerator.generate("RESOURCE_NOT_FOUND", "LEVEL", null)
+                    ErrorCodeGenerator.generate("ERROR","RESOURCE_NOT_FOUND", "LEVEL", null)
             );
         }
         levelRepository.deleteById(id);
@@ -81,9 +84,8 @@ public class LevelService {
                 "id", Long.class
         );
 
-        Map<String, Object> validFilters = FilterHelper.validateAndParseFilters(filters, validFields);
-
-        return genericRepository.findWithFilters(Level.class, validFilters, pageable)
+        return genericFilterService
+                .getAllWithFilters(Level.class, filters, pageable, validFields)
                 .map(LevelResponse::new);
     }
 }
